@@ -6,6 +6,9 @@ TagManager:
   tags:
   - PlayerInitialPoint
   - EnemyInitialPoint
+  - Team
+  - LevelBootstrapper
+  - Enemy
   layers:
   - Default
   - TransparentFX

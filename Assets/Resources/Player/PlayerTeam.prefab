@@ -199,10 +199,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 121310201871245048}
+  - component: {fileID: 6153212505028206651}
   - component: {fileID: 9148105084577636407}
   m_Layer: 0
   m_Name: PlayerTeam
-  m_TagString: Untagged
+  m_TagString: Team
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -223,6 +224,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6153212505028206651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3731101386945391556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33fe7445bf30402a93504a1ea313bd00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _id: 
+  _creatures: []
 --- !u!114 &9148105084577636407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -236,10 +251,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _creaturesCount: 3
+  _randomCount: 1
   _creatureToGenerate:
-  - {fileID: 7486438756275792860, guid: 9d934c3ca513e824aa73c8256fc39e56, type: 3}
-  - {fileID: 7486438756275792860, guid: 0ba2b7c41dc59da49a9ad250863d2887, type: 3}
-  - {fileID: 7486438756275792860, guid: 3b545833bf6e60e4e8a7b6993158b6de, type: 3}
+  - {fileID: 4235337466412945530, guid: 0ba2b7c41dc59da49a9ad250863d2887, type: 3}
+  - {fileID: 7691474433425974586, guid: 9d934c3ca513e824aa73c8256fc39e56, type: 3}
+  - {fileID: 5058285257641453143, guid: b63ee347d59f4be4aa11ea03b78c2ae3, type: 3}
   _twoCreaturesPos:
   - {fileID: 4562726734338342113}
   - {fileID: 8719690979905300729}

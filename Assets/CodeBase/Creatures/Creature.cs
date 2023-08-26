@@ -1,5 +1,5 @@
 using System.Collections;
-using UnityEditor.Compilation;
+using CodeBase.StateMachine.Creature;
 using UnityEngine;
 
 namespace CodeBase.Creatures
@@ -8,27 +8,40 @@ namespace CodeBase.Creatures
     {
         [SerializeField] protected int _maxHealth;
         [SerializeField] protected int _currentHealth;
-        [SerializeField] protected int _armor;
+        [Range(0,100)] [SerializeField] protected int _armor;
         [SerializeField] protected int _baseDamage;
-        [SerializeField] protected int _vampirismValue;
+        [SerializeField] protected int _currentDamage;
+        [SerializeField] protected int _vampirismPercent;
         [SerializeField] protected float _moveSpeed;
-        [SerializeField] private Creature[] _enemies;
+
+        [SerializeField] protected GameObject _selectedEffect;
 
         protected Vector3 _defaultPosition;
         protected bool _isMoving;
+        protected bool _canAttack;
 
-        protected Animator _animator;
         
-        private static readonly int AttackAnimationKey = Animator.StringToHash("attack");
-
+        protected CreatureStateMachine _stateMachine;
 
         public int CurrentHealth => _currentHealth;
         public int Armor => _armor;
-
-        protected void Attack()
+        public bool CanFight
         {
-            _animator.SetTrigger(AttackAnimationKey);
-            MoveToDefaultPositiom();
+            get => _canAttack;
+            set => _canAttack = value;
+        }
+
+        public virtual void Initialize()
+        {
+            _stateMachine = new CreatureStateMachine();
+            
+            _currentHealth = _maxHealth;
+            _defaultPosition = transform.position;
+        }
+        
+        public void Buff()
+        {
+            Debug.Log($"Buff {gameObject.name}");
         }
 
         protected void TakeDamage(int value)
@@ -47,10 +60,17 @@ namespace CodeBase.Creatures
 
         protected void CheckAllEnemies(out Creature enemy)
         {
-            Creature target = _enemies[0];
+            var enemiesObj = GameObject.FindGameObjectsWithTag("Enemy");
+            Creature[] enemies = new Creature[enemiesObj.Length];
+            for (int i = 0; i < enemiesObj.Length; i++)
+            {
+                enemies[i] = enemiesObj[i].GetComponent<Creature>();
+            }
+            
+            Creature target = enemies[0];
             var lowHealth = target.CurrentHealth;
-
-            foreach (var enemys in _enemies)
+        
+            foreach (var enemys in enemies)
             {
                 if (enemys.CurrentHealth < lowHealth)
                 {
@@ -61,21 +81,27 @@ namespace CodeBase.Creatures
             enemy = target;
         }
 
-        public void MoveToTarget()
+        public void MoveToTarget(Creature target)
         {
-            var pointNearTarget = new Vector3(0,0,1);
-            CheckAllEnemies(out var enemyToMove);
-            var pointToMove = enemyToMove.GetComponent<Transform>().position + pointNearTarget;
+            var pointToMove = target.transform.position + new Vector3(0,0,-1);
             
             StartCoroutine(Move(pointToMove));
+            // TODO Сделать ожидание окончания передвижения, атаковать, вернуться
             Attack();
+            
+            MoveToDefaultPositiom();
         }
-
+        
+        public void MoveToDefaultPositiom()
+        {
+            StartCoroutine(Move(_defaultPosition));
+        }
         protected IEnumerator Move(Vector3 positionToMove)
         {
             _isMoving = true;
             while (Vector3.Distance(transform.position, positionToMove) > 0.09f)
             {
+                Debug.Log("Move!");
                 transform.position = Vector3.MoveTowards(transform.position, positionToMove, _moveSpeed * Time.deltaTime);
                 yield return null;
             }
@@ -83,15 +109,21 @@ namespace CodeBase.Creatures
             transform.position = positionToMove;
             _isMoving = false;
         }
-        
-        public void MoveToDefaultPositiom()
+
+        private void Attack()
         {
+            Debug.Log("Punch");
             StartCoroutine(Move(_defaultPosition));
         }
 
-        public virtual void Initialize()
+        public void Deselect()
         {
-            
+            _selectedEffect.SetActive(false);
+        }
+
+        public void Select()
+        {
+            _selectedEffect.SetActive(true);
         }
     }
 }

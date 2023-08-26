@@ -13,8 +13,7 @@ namespace CodeBase.Infrastructure
         {
             _game = new Game(this, Curtain);
             _game.StateMAchine.Enter<BootstrapState>();
-            
-            
+
             DontDestroyOnLoad(this);
         }
     }

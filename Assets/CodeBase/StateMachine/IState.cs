@@ -3,7 +3,6 @@
     public interface IState : IExitableState
     {
         void Enter();
-        void Update();
     }
 
     public interface IExitableState

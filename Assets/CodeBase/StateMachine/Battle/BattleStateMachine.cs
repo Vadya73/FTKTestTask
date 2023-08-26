@@ -1,23 +1,23 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
-namespace CodeBase.StateMachine.Creature
+namespace CodeBase.StateMachine.Battler
 {
-    public class CreatureStateMachine
+    public class BattleStateMachine
     {
-        private Dictionary<Type, IState> _states;
+        private readonly Dictionary<Type, IState> _states;
         private IExitableState _activeState;
-        public CreatureStateMachine()
+
+        public BattleStateMachine()
         {
-            _states = new Dictionary<Type, IState>
+            _states = new Dictionary<Type, IState>()
             {
-                [typeof(CreatureIdleState)] = new CreatureIdleState(),
-                [typeof(CreatureMoveState)] = new CreatureMoveState(),
-                [typeof(CreatureMeleeAttackState)] = new CreatureMeleeAttackState(),
-                [typeof(CreatureRangeAttackState)] = new CreatureRangeAttackState(),
+                [typeof(BattleEnterState)] = new BattleEnterState(this),
+                [typeof(BattleLoopState)] = new BattleLoopState(this),
+                [typeof(ChangeTeamBattleState)] = new ChangeTeamBattleState(this),
+                [typeof(BattleFinishState)] = new BattleFinishState(this),
             };
         }
-        
         public void Enter<TState>() where TState : class, IState
         {
             IState state = ChangeState<TState>();

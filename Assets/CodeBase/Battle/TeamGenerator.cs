@@ -2,11 +2,12 @@ using CodeBase.Creatures;
 using UnityEditor;
 using UnityEngine;
 
-namespace CodeBase.Battler
+namespace CodeBase.Battle
 {
     public class TeamGenerator : MonoBehaviour, IInitializable
     {
         [Range(1,3)] [SerializeField] private int _creaturesCount = 1;
+        [SerializeField] private bool _randomCount = false;
         [SerializeField] private GameObject[] _creatureToGenerate;
         
         [SerializeField] private Transform[] _twoCreaturesPos;
@@ -20,10 +21,16 @@ namespace CodeBase.Battler
 
         private void GenerateTeam()
         {
+            if (_randomCount)
+            {
+                _creaturesCount = Random.Range(1, 4);
+                Debug.Log(_creaturesCount);
+            }
+            
             switch (_creaturesCount)
             {
                 case 1:
-                    InstantiateRandomCreature(transform);
+                    InstantiateRandomCreature(_threeCreaturesPos[0]);
                     break;
                 case 2:
                     for (int i = 0; i < 2; i++)
@@ -39,13 +46,8 @@ namespace CodeBase.Battler
         private void InstantiateRandomCreature(Transform pos)
         {
             ChooseRandomCreature(out var creature);
-            var instantObj = PrefabUtility.InstantiatePrefab(creature) as GameObject;
-            if (instantObj != null)
-            {
-                instantObj.transform.position = pos.position;
-                instantObj.transform.rotation = pos.rotation;
-                instantObj.transform.SetParent(transform);
-            }
+            var instObj = Instantiate(creature, pos.position, pos.rotation);
+            instObj.transform.SetParent(transform);
         }
 
         private void ChooseRandomCreature(out GameObject creature)
