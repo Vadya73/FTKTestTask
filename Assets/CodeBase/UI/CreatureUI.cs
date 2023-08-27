@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using CodeBase.Creatures;
 using TMPro;
 using UnityEngine;
@@ -20,7 +21,6 @@ namespace CodeBase.UI
 
         public void Initialize()
         {
-            Debug.Log("INIIIIIIIIIIT");
             _players = GameObject.FindGameObjectsWithTag(PlayerTag)
                 .Select(go => go.GetComponent<Creature>())
                 .ToArray();
@@ -91,6 +91,24 @@ namespace CodeBase.UI
                 if (_healthEnemiesTexts[i] != null)
                 {
                     _healthEnemiesTexts[i].text = $"Health: {_enemies[i].CurrentHealth}";
+                }
+            }
+        }
+        
+        private void UpdateCreatureHealthUI(Creature creature)
+        {
+            if (creature != null)
+            {
+                int index = Array.IndexOf(_players, creature);
+                if (index >= 0 && index < _healthPlayersTexts.Length && _healthPlayersTexts[index] != null)
+                {
+                    _healthPlayersTexts[index].text = $"Health: {creature.CurrentHealth}";
+                }
+
+                index = Array.IndexOf(_enemies, creature);
+                if (index >= 0 && index < _healthEnemiesTexts.Length && _healthEnemiesTexts[index] != null)
+                {
+                    _healthEnemiesTexts[index].text = $"Health: {creature.CurrentHealth}";
                 }
             }
         }

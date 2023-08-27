@@ -1,4 +1,3 @@
-using CodeBase.StateMachine.Battler;
 using UnityEngine;
 
 namespace CodeBase.Battle
@@ -8,7 +7,6 @@ namespace CodeBase.Battle
         [SerializeField] private Team[] _teams;
 
         [SerializeField] private Team _teamMove;
-        private BattleStateMachine _stateMachine;
         
         private const string Team = "Team";
 
@@ -16,8 +14,6 @@ namespace CodeBase.Battle
         
         public void Initialize()
         {
-            _stateMachine = new BattleStateMachine();
-            
             var objects = GameObject.FindGameObjectsWithTag(Team);
             _teams = new Team[objects.Length];
 

@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using CodeBase.Battle;
 using CodeBase.Interfaces;
-using CodeBase.StateMachine.Creature;
 using UnityEngine;
 
 namespace CodeBase.Creatures
@@ -24,7 +23,6 @@ namespace CodeBase.Creatures
         protected bool _canBuff = true;
 
         protected Creature _target = null;
-        protected CreatureStateMachine _stateMachine;
         protected Mover _mover;
         protected Team _currentTeam;
         protected MeshRenderer _meshRenderer;
@@ -80,7 +78,6 @@ namespace CodeBase.Creatures
 
         public void Initialize()
         {
-            _stateMachine = new CreatureStateMachine();
             _currentTeam = GetComponentInParent<Team>();
             _meshRenderer = GetComponentInChildren<MeshRenderer>();
             if (TryGetComponent<Mover>(out Mover mover))
@@ -141,12 +138,34 @@ namespace CodeBase.Creatures
         {
             if (_target == null) return;
 
-            _target.GetComponent<Creature>().ApplyDamage(_currentDamage);
+            DealDamageToTarget();
+            ApplyVampirism();
+
+            ResetAttackState();
+        }
+
+        private void DealDamageToTarget()
+        {
+            int targetHealthBeforeAttack = _target.CurrentHealth;
+            _target.ApplyDamage(_currentDamage);
+
+            int damageDealt = targetHealthBeforeAttack - _target.CurrentHealth;
+            int vampirismAmount = Mathf.RoundToInt(damageDealt * (_vampirismPercent / 100f));
+
+            _currentHealth += vampirismAmount;
+        }
+
+        private void ApplyVampirism()
+        {
+            if (_currentHealth > _maxHealth)
+                _currentHealth = _maxHealth;
+        }
+
+        private void ResetAttackState()
+        {
             _canAttack = false;
             _target = null;
-
             _mover?.MoveToDefaultPosition();
-
             OnAttackComplete?.Invoke();
         }
 
