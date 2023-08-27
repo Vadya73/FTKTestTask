@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using CodeBase.Creatures;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace CodeBase.Battle
 {
@@ -37,7 +38,7 @@ namespace CodeBase.Battle
             if (_creatures.Count <= 0)
             {
                 Debug.Log("End Game");
-                //GameEnd();
+                SceneManager.LoadScene(0);
             }
         }
 

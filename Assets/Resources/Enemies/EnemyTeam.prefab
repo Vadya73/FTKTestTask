@@ -222,7 +222,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _creaturesCount: 3
-  _randomCount: 0
+  _randomCount: 1
   _creatureToGenerate:
   - {fileID: 4235337466412945530, guid: 4c2355ea2d63e0d4bb32a551d795d089, type: 3}
   - {fileID: 7691474433425974586, guid: 295dc1f4bd306294484c9140f08ec434, type: 3}

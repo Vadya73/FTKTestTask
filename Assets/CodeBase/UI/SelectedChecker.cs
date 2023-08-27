@@ -2,9 +2,11 @@
 using CodeBase.BuffSystem;
 using CodeBase.Creatures;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace CodeBase.UI
 {
+    //It's not a SelectedChecker It's some kind of monster now
     public class SelectedChecker : MonoBehaviour, IInitializable
     {
         private const string PlayerId = "Player";
@@ -58,6 +60,11 @@ namespace CodeBase.UI
             {
                 _battler.ChangeTeamMove();
             }
+        }
+
+        public void RestartGame()
+        {
+            SceneManager.LoadScene(0);
         }
     }
 }

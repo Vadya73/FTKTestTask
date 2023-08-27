@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using CodeBase.Battle;
 using CodeBase.Interfaces;
@@ -10,24 +11,27 @@ namespace CodeBase.Creatures
     {
         [SerializeField] protected int _maxHealth;
         [SerializeField] protected int _currentHealth;
-        [Range(0,100)] [SerializeField] protected float _armor;
+        [Range(0, 100)] [SerializeField] protected float _armor;
         [SerializeField] protected int _baseDamage;
         [SerializeField] protected int _currentDamage;
         [SerializeField] protected int _vampirismPercent;
         [SerializeField] protected float _moveSpeed;
         [SerializeField] protected GameObject _selectedEffect;
-        
+
         protected int _armorDestruction = 0;
         protected int _vampiricDebuffEnemy = 0;
         protected bool _canAttack = true;
         protected bool _canBuff = true;
-        
+
         protected Creature _target = null;
         protected CreatureStateMachine _stateMachine;
         protected Mover _mover;
         protected Team _currentTeam;
         protected MeshRenderer _meshRenderer;
-        
+
+        public event Action OnAttackComplete;
+        public event Action OnHealthChanged;
+
         public int CurrentHealth => _currentHealth;
 
         public bool CanBuff
@@ -40,22 +44,26 @@ namespace CodeBase.Creatures
         {
             get => _currentDamage;
             set => _currentDamage = value;
-        }            
+        }
+
         public int VampirismPercent
         {
             get => _vampirismPercent;
             set => _vampirismPercent = Mathf.Clamp(value, 0, 100);
-        }            
+        }
+
         public int VampiricDebuffEnemy
         {
             get => _vampiricDebuffEnemy;
             set => _vampiricDebuffEnemy = value;
-        }    
+        }
+
         public int ArmorDestruction
         {
             get => _armorDestruction;
             set => _armorDestruction = value;
         }
+
         public float Armor
         {
             get => _armor;
@@ -67,6 +75,7 @@ namespace CodeBase.Creatures
             get => _canAttack;
             set => _canAttack = value;
         }
+
         public float MoveSpeed => _moveSpeed;
 
         public void Initialize()
@@ -79,7 +88,7 @@ namespace CodeBase.Creatures
                 _mover = mover;
                 _mover.OnMoveComplete += Attack;
             }
-            
+
             _currentHealth = _maxHealth;
             _currentDamage = _baseDamage;
         }
@@ -88,26 +97,25 @@ namespace CodeBase.Creatures
         {
             if (value >= _currentHealth)
                 Death();
-    
+
             var damageMultiplier = 1f - (_armor / 100f);
             var actualDamage = Mathf.RoundToInt(value * damageMultiplier);
             var originalColor = _meshRenderer.material.color;
-    
+
             _currentHealth -= actualDamage;
-            
+            OnHealthChanged?.Invoke();
+
             _meshRenderer.material.color = Color.red;
             StartCoroutine(RestoreColor(originalColor, 0.5f));
-            
+
             Debug.Log($"Apply Damage, Current health: {_currentHealth}, Name: {gameObject.name}");
         }
 
- 
-        
+
         public void Deselect()
         {
             if (_selectedEffect != null)
                 _selectedEffect.SetActive(false);
-
         }
 
         public void Select()
@@ -132,12 +140,14 @@ namespace CodeBase.Creatures
         public void Attack()
         {
             if (_target == null) return;
-                
+
             _target.GetComponent<Creature>().ApplyDamage(_currentDamage);
             _canAttack = false;
             _target = null;
-            
+
             _mover?.MoveToDefaultPosition();
+
+            OnAttackComplete?.Invoke();
         }
 
         protected void Death()
@@ -147,7 +157,7 @@ namespace CodeBase.Creatures
             GetComponentInParent<Team>().RemoveCreatureFromTeam(this);
             Destroy(gameObject);
         }
-        
+
         private IEnumerator RestoreColor(Color color, float time)
         {
             yield return new WaitForSeconds(time);

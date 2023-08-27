@@ -16,6 +16,7 @@ namespace CodeBase.Input
         public void InitializeComponent(SelectedChecker component)
         {
             _uiChecker = component;
+            component.GetComponentInChildren<CreatureUI>().Initialize();
         }
         
         private void Update()

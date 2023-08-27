@@ -252,7 +252,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _creaturesCount: 3
-  _randomCount: 0
+  _randomCount: 1
   _creatureToGenerate:
   - {fileID: 4235337466412945530, guid: 0ba2b7c41dc59da49a9ad250863d2887, type: 3}
   - {fileID: 7691474433425974586, guid: 9d934c3ca513e824aa73c8256fc39e56, type: 3}
