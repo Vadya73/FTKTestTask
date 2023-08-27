@@ -1,129 +1,163 @@
 using System.Collections;
+using CodeBase.Battle;
+using CodeBase.Interfaces;
 using CodeBase.StateMachine.Creature;
 using UnityEngine;
 
 namespace CodeBase.Creatures
 {
-    public class Creature : MonoBehaviour, IInitializable
+    public class Creature : MonoBehaviour, IInitializable, IDamagable
     {
         [SerializeField] protected int _maxHealth;
         [SerializeField] protected int _currentHealth;
-        [Range(0,100)] [SerializeField] protected int _armor;
+        [Range(0,100)] [SerializeField] protected float _armor;
         [SerializeField] protected int _baseDamage;
         [SerializeField] protected int _currentDamage;
         [SerializeField] protected int _vampirismPercent;
         [SerializeField] protected float _moveSpeed;
-
         [SerializeField] protected GameObject _selectedEffect;
-
-        protected Vector3 _defaultPosition;
-        protected bool _isMoving;
-        protected bool _canAttack;
-
         
+        protected int _armorDestruction = 0;
+        protected int _vampiricDebuffEnemy = 0;
+        protected bool _canAttack = true;
+        protected bool _canBuff = true;
+        
+        protected Creature _target = null;
         protected CreatureStateMachine _stateMachine;
-
+        protected Mover _mover;
+        protected Team _currentTeam;
+        protected MeshRenderer _meshRenderer;
+        
         public int CurrentHealth => _currentHealth;
-        public int Armor => _armor;
-        public bool CanFight
+
+        public bool CanBuff
+        {
+            get => _canBuff;
+            set => _canBuff = value;
+        }
+
+        public int CurrentDamage
+        {
+            get => _currentDamage;
+            set => _currentDamage = value;
+        }            
+        public int VampirismPercent
+        {
+            get => _vampirismPercent;
+            set => _vampirismPercent = Mathf.Clamp(value, 0, 100);
+        }            
+        public int VampiricDebuffEnemy
+        {
+            get => _vampiricDebuffEnemy;
+            set => _vampiricDebuffEnemy = value;
+        }    
+        public int ArmorDestruction
+        {
+            get => _armorDestruction;
+            set => _armorDestruction = value;
+        }
+        public float Armor
+        {
+            get => _armor;
+            set => _armor = Mathf.Clamp(value, 0, 100);
+        }
+
+        public bool CanAttack
         {
             get => _canAttack;
             set => _canAttack = value;
         }
+        public float MoveSpeed => _moveSpeed;
 
-        public virtual void Initialize()
+        public void Initialize()
         {
             _stateMachine = new CreatureStateMachine();
+            _currentTeam = GetComponentInParent<Team>();
+            _meshRenderer = GetComponentInChildren<MeshRenderer>();
+            if (TryGetComponent<Mover>(out Mover mover))
+            {
+                _mover = mover;
+                _mover.OnMoveComplete += Attack;
+            }
             
             _currentHealth = _maxHealth;
-            _defaultPosition = transform.position;
-        }
-        
-        public void Buff()
-        {
-            Debug.Log($"Buff {gameObject.name}");
+            _currentDamage = _baseDamage;
         }
 
-        protected void TakeDamage(int value)
+        public void ApplyDamage(int value)
         {
             if (value >= _currentHealth)
-            {
                 Death();
+    
+            var damageMultiplier = 1f - (_armor / 100f);
+            var actualDamage = Mathf.RoundToInt(value * damageMultiplier);
+            var originalColor = _meshRenderer.material.color;
+    
+            _currentHealth -= actualDamage;
+            
+            _meshRenderer.material.color = Color.red;
+            StartCoroutine(RestoreColor(originalColor, 0.5f));
+            
+            Debug.Log($"Apply Damage, Current health: {_currentHealth}, Name: {gameObject.name}");
+        }
+
+ 
+        
+        public void Deselect()
+        {
+            if (_selectedEffect != null)
+                _selectedEffect.SetActive(false);
+
+        }
+
+        public void Select()
+        {
+            if (_selectedEffect != null)
+                _selectedEffect.SetActive(true);
+        }
+
+        public void PrepateToAttack(Creature target)
+        {
+            if (_canAttack && _currentTeam.CanFight && target != null)
+            {
+                _target = target;
+                _mover?.MoveToTarget(target);
             }
+            else
+            {
+                _mover?.MoveToDefaultPosition();
+            }
+        }
+
+        public void Attack()
+        {
+            if (_target == null) return;
+                
+            _target.GetComponent<Creature>().ApplyDamage(_currentDamage);
+            _canAttack = false;
+            _target = null;
+            
+            _mover?.MoveToDefaultPosition();
         }
 
         protected void Death()
         {
             _currentHealth = 0;
-            Debug.Log("Death");
-        }
-
-        protected void CheckAllEnemies(out Creature enemy)
-        {
-            var enemiesObj = GameObject.FindGameObjectsWithTag("Enemy");
-            Creature[] enemies = new Creature[enemiesObj.Length];
-            for (int i = 0; i < enemiesObj.Length; i++)
-            {
-                enemies[i] = enemiesObj[i].GetComponent<Creature>();
-            }
-            
-            Creature target = enemies[0];
-            var lowHealth = target.CurrentHealth;
-        
-            foreach (var enemys in enemies)
-            {
-                if (enemys.CurrentHealth < lowHealth)
-                {
-                    lowHealth = enemys.CurrentHealth;
-                    target = enemys;
-                }
-            }
-            enemy = target;
-        }
-
-        public void MoveToTarget(Creature target)
-        {
-            var pointToMove = target.transform.position + new Vector3(0,0,-1);
-            
-            StartCoroutine(Move(pointToMove));
-            // TODO Сделать ожидание окончания передвижения, атаковать, вернуться
-            Attack();
-            
-            MoveToDefaultPositiom();
+            Debug.Log($"Death {gameObject.name}");
+            GetComponentInParent<Team>().RemoveCreatureFromTeam(this);
+            Destroy(gameObject);
         }
         
-        public void MoveToDefaultPositiom()
+        private IEnumerator RestoreColor(Color color, float time)
         {
-            StartCoroutine(Move(_defaultPosition));
-        }
-        protected IEnumerator Move(Vector3 positionToMove)
-        {
-            _isMoving = true;
-            while (Vector3.Distance(transform.position, positionToMove) > 0.09f)
-            {
-                Debug.Log("Move!");
-                transform.position = Vector3.MoveTowards(transform.position, positionToMove, _moveSpeed * Time.deltaTime);
-                yield return null;
-            }
-
-            transform.position = positionToMove;
-            _isMoving = false;
+            yield return new WaitForSeconds(time);
+            _meshRenderer.material.color = color;
         }
 
-        private void Attack()
+        private void OnDestroy()
         {
-            Debug.Log("Punch");
-            StartCoroutine(Move(_defaultPosition));
-        }
-
-        public void Deselect()
-        {
-            _selectedEffect.SetActive(false);
-        }
-
-        public void Select()
-        {
-            _selectedEffect.SetActive(true);
+            if (_mover != null)
+                _mover.OnMoveComplete -= Attack;
         }
     }
 }

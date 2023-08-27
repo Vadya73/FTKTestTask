@@ -7,10 +7,12 @@ namespace CodeBase.Battle
     {
         [SerializeField] private Team[] _teams;
 
-        private Team _teamMove;
+        [SerializeField] private Team _teamMove;
         private BattleStateMachine _stateMachine;
         
-        private const string Team = "Team"; 
+        private const string Team = "Team";
+
+        public Team TeamMove => _teamMove;
         
         public void Initialize()
         {
@@ -29,6 +31,8 @@ namespace CodeBase.Battle
                 if (team.Id == "Player")
                 {
                     SetMove(team);
+                    team.CanFight = true;
+                    return;
                 }
                 
                 team.CanFight = false;
@@ -38,25 +42,32 @@ namespace CodeBase.Battle
         private void SetMove(Team team)
         {
             _teamMove = team;
-            team.CanFight = true;
+            _teamMove.CanFight = true;
+            
+            if (team.TryGetComponent(out AutoBattlerComponent component))
+            {
+                component.Battle();
+            }
         }
 
-        private void ChangeTeamMove()
+        public void ChangeTeamMove()
         {
             for (var i = 0; i < _teams.Length; i++)
             {
-                var team = _teams[i];
-                if (_teamMove == team)
+                if (_teamMove == _teams[i])
                 {
-                    if (i++ <= _teams.Length)
+                    if (i == _teams.Length - 1)
                     {
                         SetMove(_teams[0]);
                     }
-                    SetMove(_teams[i++]);
+                    else
+                    {
+                        SetMove(_teams[i + 1]);
+                        Debug.Log($"Ход команды: {_teams[i + 1].gameObject.name}");
+                    }
+                    return;
                 }
             }
         }
-        
-        
     }
 }

@@ -1,14 +1,22 @@
-﻿using CodeBase.Creatures;
+﻿using CodeBase.Battle;
+using CodeBase.BuffSystem;
+using CodeBase.Creatures;
 using UnityEngine;
 
 namespace CodeBase.UI
 {
-    public class SelectedChecker : MonoBehaviour
+    public class SelectedChecker : MonoBehaviour, IInitializable
     {
+        private const string PlayerId = "Player";
         private Creature _selectedHero;
         private Creature _selectedEnemy;
+        private Battler _battler;
         
-
+        public void Initialize()
+        {
+            _battler = GameObject.FindWithTag("Battler").GetComponent<Battler>();
+        }
+        
         public void TryAttack()
         {
             Attack(_selectedHero, _selectedEnemy);
@@ -16,13 +24,20 @@ namespace CodeBase.UI
         
         public void TryBuff()
         {
-            _selectedHero.Buff();
+            if (_selectedHero.CanBuff)
+            {
+                _selectedHero.GetComponent<Buffs>().Buff();
+                _selectedHero.CanBuff = false;
+            }
         }
         
         private void Attack(Creature attacker, Creature target)
         {
-            Debug.Log(attacker.name + " attacks " + target.name);
-            _selectedHero.MoveToTarget(target);
+            if (attacker != null && target != null)
+            {
+                Debug.Log(attacker.name + " attacks " + target.name);
+                attacker.PrepateToAttack(target);
+            }
         }
 
         public void SelectHero(Creature hero)
@@ -35,6 +50,14 @@ namespace CodeBase.UI
         {
             _selectedEnemy = enemy;
             _selectedEnemy.Select();
+        }
+
+        public void EndMove()
+        {
+            if (_battler.TeamMove.Id == PlayerId)
+            {
+                _battler.ChangeTeamMove();
+            }
         }
     }
 }

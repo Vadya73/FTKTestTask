@@ -37,8 +37,8 @@ namespace CodeBase.StateMachine.Game
             GameObject levelBootstrapper = GameObject.FindWithTag(Levelbootstrapper);
             levelBootstrapper.GetComponent<IInitializable>().Initialize();
             levelBootstrapper.GetComponent<PlayerInput>().InitializeComponent(hud);
-
-
+            hud.GetComponent<SelectedChecker>().Initialize();
+            
             _gameStateMachine.Enter<GameLoopState>();
         }
     }

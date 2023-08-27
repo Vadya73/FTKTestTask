@@ -13,10 +13,14 @@ namespace CodeBase.Battle
         [SerializeField] private Transform[] _twoCreaturesPos;
         [SerializeField] private Transform[] _threeCreaturesPos;
 
+        private bool _isGenerated = false;
+
         public void Initialize()
         {
+            if (_isGenerated)
+                return;
+            _isGenerated = true;
             GenerateTeam();
-            Debug.Log("TeamsInit");
         }
 
         private void GenerateTeam()
@@ -24,13 +28,12 @@ namespace CodeBase.Battle
             if (_randomCount)
             {
                 _creaturesCount = Random.Range(1, 4);
-                Debug.Log(_creaturesCount);
             }
             
             switch (_creaturesCount)
             {
                 case 1:
-                    InstantiateRandomCreature(_threeCreaturesPos[0]);
+                    InstantiateRandomCreature(_threeCreaturesPos[1]);
                     break;
                 case 2:
                     for (int i = 0; i < 2; i++)

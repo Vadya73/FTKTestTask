@@ -63,6 +63,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5535106904204958635, guid: 7669bca9baa5e1447a68970a6fe7fcb5, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6831249562244212181}
+    - targetCorrespondingSourceObject: {fileID: 5535106904204958635, guid: 7669bca9baa5e1447a68970a6fe7fcb5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -2495498962114152962}
+    - targetCorrespondingSourceObject: {fileID: 5535106904204958635, guid: 7669bca9baa5e1447a68970a6fe7fcb5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4629464297306688073}
   m_SourcePrefab: {fileID: 100100000, guid: 7669bca9baa5e1447a68970a6fe7fcb5, type: 3}
 --- !u!1 &3703802643488007333 stripped
 GameObject:
@@ -86,11 +92,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a497e37e509440584537f06c0a23795, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHealth: 0
+  _maxHealth: 100
   _currentHealth: 0
   _armor: 0
-  _baseDamage: 0
+  _baseDamage: 15
   _currentDamage: 0
   _vampirismPercent: 0
   _moveSpeed: 5
   _selectedEffect: {fileID: 3703802643488007333}
+--- !u!114 &-2495498962114152962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4235337466412945530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f6659e9a5b84c6baa4d47cdb84798a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4629464297306688073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4235337466412945530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 381e9d122ba34059b0de0476b5633b08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

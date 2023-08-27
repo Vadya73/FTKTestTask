@@ -55,7 +55,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 922423413106131104}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -2, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -170,6 +170,7 @@ GameObject:
   - component: {fileID: 661770813191308483}
   - component: {fileID: 8280656329019591910}
   - component: {fileID: -7054129664451418225}
+  - component: {fileID: 3559204011008264030}
   m_Layer: 0
   m_Name: EnemyTeam
   m_TagString: Team
@@ -207,6 +208,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _id: 
   _creatures: []
+  _canFight: 0
 --- !u!114 &-7054129664451418225
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,7 +222,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _creaturesCount: 3
-  _randomCount: 1
+  _randomCount: 0
   _creatureToGenerate:
   - {fileID: 4235337466412945530, guid: 4c2355ea2d63e0d4bb32a551d795d089, type: 3}
   - {fileID: 7691474433425974586, guid: 295dc1f4bd306294484c9140f08ec434, type: 3}
@@ -232,6 +234,18 @@ MonoBehaviour:
   - {fileID: 151036415002377657}
   - {fileID: 7674432326358665174}
   - {fileID: 582445008106334405}
+--- !u!114 &3559204011008264030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4775166415722359341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca6d8c21d1254fa99699746f5fd08b95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4859467924117429337
 GameObject:
   m_ObjectHideFlags: 0
@@ -321,7 +335,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6642181894126021336}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -2, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
