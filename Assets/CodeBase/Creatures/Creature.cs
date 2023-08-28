@@ -31,6 +31,7 @@ namespace CodeBase.Creatures
         public event Action OnHealthChanged;
 
         public int CurrentHealth => _currentHealth;
+        public int MaxHealth => _maxHealth;
 
         public bool CanBuff
         {
@@ -123,10 +124,14 @@ namespace CodeBase.Creatures
 
         public void PrepateToAttack(Creature target)
         {
+            if (!_currentTeam.MoveFree)
+                return;
+
             if (_canAttack && _currentTeam.CanFight && target != null)
             {
                 _target = target;
                 _mover?.MoveToTarget(target);
+                _currentTeam.MoveFree = false;
             }
             else
             {
@@ -167,6 +172,7 @@ namespace CodeBase.Creatures
             _target = null;
             _mover?.MoveToDefaultPosition();
             OnAttackComplete?.Invoke();
+            _currentTeam.MoveFree = true;
         }
 
         protected void Death()
@@ -185,6 +191,8 @@ namespace CodeBase.Creatures
 
         private void OnDestroy()
         {
+            
+            
             if (_mover != null)
                 _mover.OnMoveComplete -= Attack;
         }

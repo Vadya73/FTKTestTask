@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using CodeBase.Creatures;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace CodeBase.Battle
 {
@@ -12,6 +14,8 @@ namespace CodeBase.Battle
         private List<Creature> _enemies;
 
         private const string Player = "Player";
+
+        private List<Action> _attackCompleteListeners = new();
 
         public void InitializeComponent(Battler battler)
         {
@@ -28,6 +32,7 @@ namespace CodeBase.Battle
 
         public void Battle()
         {
+            _attackCompleteListeners.Clear();
             StartCoroutine(PerformBattle());
         }
 
@@ -41,7 +46,7 @@ namespace CodeBase.Battle
 
                 if (enemy != null && enemy.CurrentHealth > 0)
                 {
-                    creature.OnAttackComplete += () => 
+                    Action attackCompleteListener = () => 
                     {
                         attackedCreatureCount++;
 
@@ -49,12 +54,15 @@ namespace CodeBase.Battle
                             _battler.ChangeTeamMove();
                     };
 
+                    _attackCompleteListeners.Add(attackCompleteListener);
+                    creature.OnAttackComplete += attackCompleteListener;
+
                     creature.PrepateToAttack(enemy);
                     yield return new WaitUntil(() => !creature.CanAttack);
                 }
             }
         }
-        
+
         private Creature FindTheWeakestEnemy()
         {
             Creature weakestEnemy = null;
@@ -83,11 +91,22 @@ namespace CodeBase.Battle
 
             if (validEnemies.Count > 0)
             {
-                int randomIndex = UnityEngine.Random.Range(0, validEnemies.Count);
+                int randomIndex = Random.Range(0, validEnemies.Count);
                 return validEnemies[randomIndex];
             }
 
             return null;
+        }
+
+        private void OnDestroy()
+        {
+            foreach (var listener in _attackCompleteListeners)
+            {
+                foreach (var creature in _creatures)
+                {
+                    creature.OnAttackComplete -= listener;
+                }
+            }
         }
     }
 }

@@ -10,8 +10,9 @@ namespace CodeBase.Battle
         [SerializeField] private string _id;
         [SerializeField] private List<Creature> _creatures = new();
         [SerializeField] private bool _canFight;
+        private bool _movefree = true;
         
-
+        public bool MoveFree { get => _movefree; set => _movefree = value; }
         public string Id { get => _id; set => _id = value; }
 
         public bool CanFight
@@ -24,6 +25,7 @@ namespace CodeBase.Battle
                     creature.CanAttack = true;
             }
         }
+
 
         public void Initialize()
         {

@@ -5,7 +5,6 @@ namespace CodeBase.Battle
     public class Battler : MonoBehaviour, IInitializable
     {
         [SerializeField] private Team[] _teams;
-
         [SerializeField] private Team _teamMove;
         
         private const string Team = "Team";
