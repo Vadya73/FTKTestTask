@@ -109,13 +109,13 @@ namespace CodeBase.Creatures
         }
 
 
-        public void Deselect()
+        public void ActiveDeselectEffect()
         {
             if (_selectedEffect != null)
                 _selectedEffect.SetActive(false);
         }
 
-        public void Select()
+        public void ActiveSelectEffect()
         {
             if (_selectedEffect != null)
                 _selectedEffect.SetActive(true);
@@ -139,8 +139,6 @@ namespace CodeBase.Creatures
             if (_target == null) return;
 
             DealDamageToTarget();
-            ApplyVampirism();
-
             ResetAttackState();
         }
 
@@ -150,13 +148,15 @@ namespace CodeBase.Creatures
             _target.ApplyDamage(_currentDamage);
 
             int damageDealt = targetHealthBeforeAttack - _target.CurrentHealth;
-            int vampirismAmount = Mathf.RoundToInt(damageDealt * (_vampirismPercent / 100f));
+            ApplyVampirism(damageDealt);
 
-            _currentHealth += vampirismAmount;
         }
 
-        private void ApplyVampirism()
+        private void ApplyVampirism(float value)
         {
+            int vampirismAmount = Mathf.RoundToInt(value * (_vampirismPercent / 100f));
+
+            _currentHealth += vampirismAmount;
             if (_currentHealth > _maxHealth)
                 _currentHealth = _maxHealth;
         }

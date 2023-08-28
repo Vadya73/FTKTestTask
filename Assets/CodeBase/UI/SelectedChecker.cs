@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 
 namespace CodeBase.UI
 {
-    //It's not a SelectedChecker It's some kind of monster now
     public class SelectedChecker : MonoBehaviour, IInitializable
     {
         private const string PlayerId = "Player";
@@ -45,13 +44,13 @@ namespace CodeBase.UI
         public void SelectHero(Creature hero)
         {
             _selectedHero = hero;
-            _selectedHero.Select();
+            _selectedHero.ActiveSelectEffect();
         }
 
         public void SelectEnemy(Creature enemy)
         {
             _selectedEnemy = enemy;
-            _selectedEnemy.Select();
+            _selectedEnemy.ActiveSelectEffect();
         }
 
         public void EndMove()

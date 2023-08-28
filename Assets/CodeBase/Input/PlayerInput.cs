@@ -29,7 +29,7 @@ namespace CodeBase.Input
                 if (Physics.Raycast(ray, out hit) && hit.collider.gameObject.TryGetComponent(out Creature rayedCreature) && hit.collider.CompareTag(Player))
                 {
                     // ReSharper disable once Unity.NoNullPropagation
-                    _oldSelectHero?.Deselect();
+                    _oldSelectHero?.ActiveDeselectEffect();
                     
                     _uiChecker.SelectHero(rayedCreature);
                     _oldSelectHero = rayedCreature;
@@ -38,7 +38,7 @@ namespace CodeBase.Input
                 if (Physics.Raycast(ray, out hit) && hit.collider.gameObject.TryGetComponent(out Creature rayed) && hit.collider.CompareTag(Enemy))
                 {
                     // ReSharper disable once Unity.NoNullPropagation
-                    _oldSelectEnemy?.Deselect();
+                    _oldSelectEnemy?.ActiveDeselectEffect();
                     
                     _uiChecker.SelectEnemy(rayed);
                     _oldSelectEnemy = rayed;

@@ -12,8 +12,6 @@ namespace CodeBase.Battle
         private List<Creature> _enemies;
 
         private const string Player = "Player";
-        private const float WaitSeconds = 4;
-        private bool _isPerformingBattle = false;
 
         public void InitializeComponent(Battler battler)
         {
@@ -26,11 +24,6 @@ namespace CodeBase.Battle
 
             for (int i = 0; i < players.Length; i++)
                 _enemies.Add(players[i].GetComponent<Creature>());
-
-            foreach (var creature in _creatures)
-            {
-                creature.OnAttackComplete += HandleAttackComplete;
-            }
         }
 
         public void Battle()
@@ -44,7 +37,7 @@ namespace CodeBase.Battle
 
             foreach (var creature in _creatures)
             {
-                var enemy = FindTheWeakestEnemy();
+                var enemy = Random.value < 0.5f ? TakeRandomEnemy() : FindTheWeakestEnemy();
 
                 if (enemy != null && enemy.CurrentHealth > 0)
                 {
@@ -61,30 +54,6 @@ namespace CodeBase.Battle
                 }
             }
         }
-
-        private readonly object _performingBattleLock = new object();
-
-        private void HandleAttackComplete()
-        {
-            lock (_performingBattleLock)
-            {
-                if (!_isPerformingBattle)
-                    return;
-
-                foreach (var creature in _creatures)
-                {
-                    if (!creature.CanAttack)
-                        continue;
-
-                    Creature targetEnemy = UnityEngine.Random.value < 0.5f ? TakeRandomEnemy() : FindTheWeakestEnemy(); //why don't work!!!??. уже час ночи я хочу спать
-                    if (targetEnemy != null)
-                    {
-                        creature.PrepateToAttack(targetEnemy);
-                    }
-                }
-            }
-        }
-
         
         private Creature FindTheWeakestEnemy()
         {
@@ -119,14 +88,6 @@ namespace CodeBase.Battle
             }
 
             return null;
-        }
-
-        private void OnDestroy()
-        {
-            foreach (var creature in _creatures)
-            {
-                creature.OnAttackComplete -= HandleAttackComplete;
-            }
         }
     }
 }
